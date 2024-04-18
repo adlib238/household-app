@@ -3,15 +3,22 @@ import { Card, CardContent, Grid, Stack, Typography } from "@mui/material";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import { Transaction } from "../types";
+import { financeCalculations } from "../utils/financeCalculations";
+import { formatCurrency } from "../utils/formatting";
+interface MonthlySummaryProps {
+  monthlyTransactions: Transaction[];
+}
 
-const MonthlySummery = () => {
+const MonthlySummery = ({ monthlyTransactions }: MonthlySummaryProps) => {
+  const { income, expense, balance } = financeCalculations(monthlyTransactions);
   return (
     <Grid container spacing={{ xs: 1, sm: 2 }} mb={2}>
       {/* 収入 */}
       <Grid item xs={4} display={"flex"} flexDirection={"column"}>
         <Card
           sx={{
-            bgcolor: "blue",
+            bgcolor: (theme) => theme.palette.incomeColor.main,
             color: "white",
             borderRadius: "10px",
             flexGrow: 1,
@@ -31,7 +38,7 @@ const MonthlySummery = () => {
                 fontSize: { xs: ".8rem", sm: "1rem", md: "1.2rem" },
               }}
             >
-              ¥300
+              ¥{formatCurrency(income)}
             </Typography>
           </CardContent>
         </Card>
@@ -40,7 +47,7 @@ const MonthlySummery = () => {
       <Grid item xs={4} display={"flex"} flexDirection={"column"}>
         <Card
           sx={{
-            bgcolor: "red",
+            bgcolor: (theme) => theme.palette.expenseColor.main,
             color: "white",
             borderRadius: "10px",
             flexGrow: 1,
@@ -60,7 +67,7 @@ const MonthlySummery = () => {
                 fontSize: { xs: ".8rem", sm: "1rem", md: "1.2rem" },
               }}
             >
-              ¥300
+              ¥{formatCurrency(expense)}
             </Typography>
           </CardContent>
         </Card>
@@ -69,7 +76,7 @@ const MonthlySummery = () => {
       <Grid item xs={4} display={"flex"} flexDirection={"column"}>
         <Card
           sx={{
-            bgcolor: "green",
+            bgcolor: (theme) => theme.palette.balanceColor.main,
             color: "white",
             borderRadius: "10px",
             flexGrow: 1,
@@ -89,7 +96,7 @@ const MonthlySummery = () => {
                 fontSize: { xs: ".8rem", sm: "1rem", md: "1.2rem" },
               }}
             >
-              ¥300
+              ¥{formatCurrency(balance)}
             </Typography>
           </CardContent>
         </Card>
