@@ -8,9 +8,6 @@ import { Balance, CalendarContent, Transaction } from "../types";
 import { calculateDailyBalances } from "../utils/financeCalculations";
 import { formatCurrency } from "../utils/formatting";
 // import interactionPlugin from "@fullcalendar/interaction";
-import { DateClickArg } from "@fullcalendar/interaction";
-import { useTheme } from "@mui/material";
-import { isSameMonth } from "date-fns";
 
 interface CalendarProps {
   monthlyTransactions: Transaction[];
