@@ -21,6 +21,10 @@ export function financeCalculations(transactions: Transaction[]): Balance {
 export function calculateDailyBalances(
   transactions: Transaction[]
 ): Record<string, Balance> {
+  if (!Array.isArray(transactions)) {
+    console.error("Invalid transactions data: Expected an array");
+    return {};
+  }
   return transactions.reduce<Record<string, Balance>>((acc, transaction) => {
     const day = transaction.date;
     if (!acc[day]) {

@@ -15,8 +15,7 @@ import { formatMonth } from "./utils/formatting";
 
 function App() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [currentMonth] = useState(new Date());
-  const [setIsLoading] = useState(true);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   //型ガード
   function isFirestoreError(
@@ -42,8 +41,6 @@ function App() {
         } else {
           console.error("一般的なエラーは:", err);
         }
-      } finally {
-        setIsLoading(false);
       }
     };
     fecheTransactions();
@@ -62,7 +59,12 @@ function App() {
           <Route path="/" element={<AppLayout />}>
             <Route
               index
-              element={<Home monthlyTransactions={monthlyTransactions} />}
+              element={
+                <Home
+                  monthlyTransactions={monthlyTransactions}
+                  setCurrentMonth={setCurrentMonth}
+                />
+              }
             />
             <Route path="/report" element={<Report />} />
             <Route path="*" element={<NoMatch />} />
