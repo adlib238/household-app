@@ -16,10 +16,20 @@ interface HomeProps {
 const Home = ({ monthlyTransactions, setCurrentMonth }: HomeProps) => {
   const today = format(new Date(), "yyyy-MM-dd");
   const [currentDay, setCurrentDay] = useState(today);
+  const [isEntryDrawerOpen, setIsEntryDrawerOpen] = useState(false);
   // 一日分のデータを取得
   const dailyTransactions = monthlyTransactions.filter(
     (transaction) => transaction.date === currentDay
   );
+
+  const closeForm = () => {
+    setIsEntryDrawerOpen(!isEntryDrawerOpen);
+  };
+
+  // フォームの開閉処理(内訳追加ボタンを押したとき)
+  const handleAddTransactionForm = () => {
+    setIsEntryDrawerOpen(!isEntryDrawerOpen);
+  };
 
   // //日付を選択したときの処理
   const handleDateClick = (dateInfo: DateClickArg) => {
@@ -45,8 +55,12 @@ const Home = ({ monthlyTransactions, setCurrentMonth }: HomeProps) => {
         <TransactionMenu
           dailyTransactions={dailyTransactions}
           currentDay={currentDay}
+          onAddTransactionForm={handleAddTransactionForm}
         />
-        <TransactionForm />
+        <TransactionForm
+          onCloseForm={closeForm}
+          isEntryDrawerOpen={isEntryDrawerOpen}
+        />
       </Box>
     </Box>
   );
