@@ -21,6 +21,7 @@
     "@fullcalendar/core": "^6.1.11",
     "@fullcalendar/daygrid": "^6.1.11",
     "@fullcalendar/react": "^6.1.11",
+    "@hookform/resolvers": "^3.3.4",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "@radix-ui/react-slot": "^1.0.2",
@@ -33,7 +34,8 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.51.3",
     "tailwind-merge": "^2.2.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.23.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
