@@ -21,7 +21,7 @@ import WorkIcon from "@mui/icons-material/Work";
 import SavingsIcon from "@mui/icons-material/Savings";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { ExpenseCategory, IncomeCategory } from "../types";
+import { ExpenseCategory, IncomeCategory, Transaction } from "../types";
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Schema, transactionSchema } from "../validations/schema";
@@ -31,6 +31,11 @@ interface TransactionFormProps {
   isEntryDrawerOpen: boolean;
   currentDay: string;
   onSaveTransaction: (transaction: Schema) => Promise<void>;
+  selectedTransaction: Transaction | null;
+  onDeleteTransaction: (transaction: string) => Promise<void>;
+  setSelectedTransaction: React.Dispatch<
+    React.SetStateAction<Transaction | null>
+  >;
 }
 type IncomeExpense = "income" | "expense";
 
@@ -61,6 +66,9 @@ const TransactionForm = ({
   isEntryDrawerOpen,
   currentDay,
   onSaveTransaction,
+  selectedTransaction,
+  onDeleteTransaction,
+  setSelectedTransaction,
 }: TransactionFormProps) => {
   const formWidth = 320;
   const [categories, setCategories] = useState(expenseCategories);
@@ -110,6 +118,33 @@ const TransactionForm = ({
       category: "",
       content: "",
     });
+  };
+
+  //フォーム内容を更新
+  useEffect(() => {
+    if (selectedTransaction) {
+      setValue("type", selectedTransaction.type);
+      setValue("date", selectedTransaction.date);
+      setValue("category", selectedTransaction.category);
+      setValue("amount", selectedTransaction.amount);
+      setValue("content", selectedTransaction.content);
+    } else {
+      reset({
+        type: "expense",
+        date: currentDay,
+        amount: 0,
+        category: "",
+        content: "",
+      });
+    }
+  }, [selectedTransaction]);
+
+  //削除処理
+  const handleDelete = () => {
+    if (selectedTransaction) {
+      onDeleteTransaction(selectedTransaction.id);
+      setSelectedTransaction(null);
+    }
   };
 
   return (
@@ -252,6 +287,17 @@ const TransactionForm = ({
           >
             保存
           </Button>
+          {/* 削除ボタン */}
+          {selectedTransaction && (
+            <Button
+              onClick={handleDelete}
+              variant="outlined"
+              color={"secondary"}
+              fullWidth
+            >
+              削除
+            </Button>
+          )}
         </Stack>
       </Box>
     </Box>

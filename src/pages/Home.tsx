@@ -14,15 +14,21 @@ interface HomeProps {
   monthlyTransactions: Transaction[];
   setCurrentMonth: React.Dispatch<React.SetStateAction<Date>>;
   onSaveTransaction: (transaction: Schema) => Promise<void>;
+  onDeleteTransaction: (transaction: string) => Promise<void>;
 }
 const Home = ({
   monthlyTransactions,
   setCurrentMonth,
   onSaveTransaction,
+  onDeleteTransaction,
 }: HomeProps) => {
   const today = format(new Date(), "yyyy-MM-dd");
   const [currentDay, setCurrentDay] = useState(today);
   const [isEntryDrawerOpen, setIsEntryDrawerOpen] = useState(false);
+  const [
+    selectedTransaction,
+    setSelectedTransaction,
+  ] = useState<Transaction | null>(null);
   // 一日分のデータを取得
   const dailyTransactions = monthlyTransactions.filter(
     (transaction) => transaction.date === currentDay
@@ -30,11 +36,23 @@ const Home = ({
 
   const closeForm = () => {
     setIsEntryDrawerOpen(!isEntryDrawerOpen);
+    setSelectedTransaction(null);
+  };
+
+  //取り引きが選択された時の処理
+  const handleSelectTransaction = (transaction: Transaction) => {
+    console.log(transaction);
+    setIsEntryDrawerOpen(true);
+    setSelectedTransaction(transaction);
   };
 
   // フォームの開閉処理(内訳追加ボタンを押したとき)
   const handleAddTransactionForm = () => {
-    setIsEntryDrawerOpen(!isEntryDrawerOpen);
+    if (selectedTransaction) {
+      setSelectedTransaction(null);
+    } else {
+      setIsEntryDrawerOpen(!isEntryDrawerOpen);
+    }
   };
 
   // //日付を選択したときの処理
@@ -62,12 +80,16 @@ const Home = ({
           dailyTransactions={dailyTransactions}
           currentDay={currentDay}
           onAddTransactionForm={handleAddTransactionForm}
+          onSelectTransaction={handleSelectTransaction}
         />
         <TransactionForm
           onCloseForm={closeForm}
           isEntryDrawerOpen={isEntryDrawerOpen}
           currentDay={currentDay}
           onSaveTransaction={onSaveTransaction}
+          selectedTransaction={selectedTransaction}
+          onDeleteTransaction={onDeleteTransaction}
+          setSelectedTransaction={setSelectedTransaction}
         />
       </Box>
     </Box>
