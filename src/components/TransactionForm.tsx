@@ -36,6 +36,10 @@ interface TransactionFormProps {
   setSelectedTransaction: React.Dispatch<
     React.SetStateAction<Transaction | null>
   >;
+  onUpdateTransaction: (
+    transaction: Schema,
+    transactionId: string
+  ) => Promise<void>;
 }
 type IncomeExpense = "income" | "expense";
 
@@ -69,6 +73,7 @@ const TransactionForm = ({
   selectedTransaction,
   onDeleteTransaction,
   setSelectedTransaction,
+  onUpdateTransaction,
 }: TransactionFormProps) => {
   const formWidth = 320;
   const [categories, setCategories] = useState(expenseCategories);
@@ -110,7 +115,24 @@ const TransactionForm = ({
   // 送信処理
   const onSubmit: SubmitHandler<Schema> = (data) => {
     console.log(data);
-    onSaveTransaction(data);
+    if (selectedTransaction) {
+      onUpdateTransaction(data, selectedTransaction.id)
+        .then(() => {
+          // console.log("更新しました。");
+          setSelectedTransaction(null);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      onSaveTransaction(data)
+        .then(() => {
+          console.log("保存しました。");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
     reset({
       type: "expense",
       date: currentDay,
@@ -120,12 +142,22 @@ const TransactionForm = ({
     });
   };
 
+  // 選択肢が更新されたか確認
+  useEffect(() => {
+    if (selectedTransaction) {
+      const categoryExists = categories.some(
+        (category) => category.label === selectedTransaction.category
+      );
+      setValue("category", categoryExists ? selectedTransaction.category : "");
+    }
+  }, [selectedTransaction, categories]);
+
   //フォーム内容を更新
   useEffect(() => {
     if (selectedTransaction) {
       setValue("type", selectedTransaction.type);
       setValue("date", selectedTransaction.date);
-      setValue("category", selectedTransaction.category);
+      // setValue("category", selectedTransaction.category);
       setValue("amount", selectedTransaction.amount);
       setValue("content", selectedTransaction.content);
     } else {
@@ -285,7 +317,7 @@ const TransactionForm = ({
             color={currentType === "income" ? "primary" : "error"}
             fullWidth
           >
-            保存
+            {selectedTransaction ? "更新" : "保存"}
           </Button>
           {/* 削除ボタン */}
           {selectedTransaction && (
