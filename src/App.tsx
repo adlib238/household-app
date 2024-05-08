@@ -24,6 +24,7 @@ import { Schema } from "./validations/schema";
 function App() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [isLoading, setIsLoading] = useState(true);
 
   //型ガード
   function isFirestoreError(
@@ -49,6 +50,8 @@ function App() {
         } else {
           console.error("一般的なエラーは:", err);
         }
+      } finally {
+        setIsLoading(false);
       }
     };
     fecheTransactions();
@@ -149,6 +152,8 @@ function App() {
                 <Report
                   currentMonth={currentMonth}
                   setCurrentMonth={setCurrentMonth}
+                  monthlyTransactions={monthlyTransactions}
+                  isLoading={isLoading}
                 />
               }
             />
