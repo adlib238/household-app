@@ -27,6 +27,7 @@ const Calendar = ({
   currentDay,
   setCurrentMonth,
   today,
+  onDateClick,
 }: CalendarProps) => {
   const theme = useTheme();
   // 1.各日付の収支を計算する関数（呼び出し）🎃
@@ -84,11 +85,6 @@ const Calendar = ({
     }
   };
 
-  const handleDateClick = (dateInfo: DateClickArg) => {
-    console.log(dateInfo);
-    setCurrentDay(dateInfo.dateStr);
-  };
-
   return (
     <FullCalendar
       locale={jaLocale}
@@ -97,7 +93,7 @@ const Calendar = ({
       events={[...calendarEvents, backgroundEvent]}
       eventContent={renderEventContent}
       datesSet={handleDateSet}
-      dateClick={handleDateClick}
+      dateClick={onDateClick}
     />
   );
 };

@@ -4,6 +4,8 @@ import {
   ButtonGroup,
   FormControl,
   FormHelperText,
+  Dialog,
+  DialogContent,
   IconButton,
   InputLabel,
   ListItemIcon,
@@ -46,6 +48,9 @@ interface TransactionFormProps {
     transaction: Schema,
     transactionId: string
   ) => Promise<void>;
+  isDialogOpen: boolean;
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isMobile: boolean;
 }
 type IncomeExpense = "income" | "expense";
 
@@ -80,6 +85,9 @@ const TransactionForm = ({
   onDeleteTransaction,
   setSelectedTransaction,
   onUpdateTransaction,
+  isDialogOpen,
+  setIsDialogOpen,
+  isMobile,
 }: TransactionFormProps) => {
   const formWidth = 320;
   const [categories, setCategories] = useState(expenseCategories);
@@ -126,6 +134,9 @@ const TransactionForm = ({
         .then(() => {
           // console.log("更新しました。");
           setSelectedTransaction(null);
+          if (isMobile) {
+            setIsDialogOpen(false);
+          }
         })
         .catch((error) => {
           console.error(error);
@@ -181,30 +192,14 @@ const TransactionForm = ({
   const handleDelete = () => {
     if (selectedTransaction) {
       onDeleteTransaction(selectedTransaction.id);
+      if (isMobile) {
+        setIsDialogOpen(false);
+      }
       setSelectedTransaction(null);
     }
   };
-
-  return (
-    <Box
-      sx={{
-        position: "fixed",
-        top: 64,
-        right: isEntryDrawerOpen ? formWidth : "-2%", // フォームの位置を調整
-        width: formWidth,
-        height: "100%",
-        bgcolor: "background.paper",
-        zIndex: (theme) => theme.zIndex.drawer - 1,
-        transition: (theme) =>
-          theme.transitions.create("right", {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-          }),
-        p: 2, // 内部の余白
-        boxSizing: "border-box", // ボーダーとパディングをwidthに含める
-        boxShadow: "0px 0px 15px -5px #777777",
-      }}
-    >
+  const formContent = (
+    <>
       {/* 入力エリアヘッダー */}
       <Box display={"flex"} justifyContent={"space-between"} mb={2}>
         <Typography variant="h6">入力</Typography>
@@ -225,24 +220,30 @@ const TransactionForm = ({
           <Controller
             name="type"
             control={control}
-            render={({ field }) => (
-              <ButtonGroup fullWidth>
-                <Button
-                  variant={field.value === "expense" ? "contained" : "outlined"}
-                  color="error"
-                  onClick={() => incomeExpenseToggle("expense")}
-                >
-                  支出
-                </Button>
-                <Button
-                  onClick={() => incomeExpenseToggle("income")}
-                  color={"primary"}
-                  variant={field.value === "income" ? "contained" : "outlined"}
-                >
-                  収入
-                </Button>
-              </ButtonGroup>
-            )}
+            render={({ field }) => {
+              return (
+                <ButtonGroup fullWidth>
+                  <Button
+                    variant={
+                      field.value === "expense" ? "contained" : "outlined"
+                    }
+                    color="error"
+                    onClick={() => incomeExpenseToggle("expense")}
+                  >
+                    支出
+                  </Button>
+                  <Button
+                    onClick={() => incomeExpenseToggle("income")}
+                    color={"primary"}
+                    variant={
+                      field.value === "income" ? "contained" : "outlined"
+                    }
+                  >
+                    収入
+                  </Button>
+                </ButtonGroup>
+              );
+            }}
           />
           {/* 日付 */}
           <Controller
@@ -261,7 +262,6 @@ const TransactionForm = ({
               />
             )}
           />
-          {/* カテゴリ */}
           <Controller
             name="category"
             control={control}
@@ -322,12 +322,11 @@ const TransactionForm = ({
           <Button
             type="submit"
             variant="contained"
-            color={currentType === "income" ? "primary" : "error"}
+            color={currentType === "expense" ? "error" : "primary"}
             fullWidth
           >
             {selectedTransaction ? "更新" : "保存"}
           </Button>
-          {/* 削除ボタン */}
           {selectedTransaction && (
             <Button
               onClick={handleDelete}
@@ -340,7 +339,45 @@ const TransactionForm = ({
           )}
         </Stack>
       </Box>
-    </Box>
+    </>
+  );
+  return (
+    <>
+      {isMobile ? (
+        //mobile
+        <Dialog
+          open={isDialogOpen}
+          onClose={onCloseForm}
+          fullWidth
+          maxWidth={"sm"}
+        >
+          <DialogContent>{formContent}</DialogContent>
+        </Dialog>
+      ) : (
+        //PC
+        <Box
+          sx={{
+            position: "fixed",
+            top: 64,
+            right: isEntryDrawerOpen ? formWidth : "-2%", // フォームの位置を調整
+            width: formWidth,
+            height: "100%",
+            bgcolor: "background.paper",
+            zIndex: (theme) => theme.zIndex.drawer - 1,
+            transition: (theme) =>
+              theme.transitions.create("right", {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+              }),
+            p: 2, // 内部の余白
+            boxSizing: "border-box", // ボーダーとパディングをwidthに含める
+            boxShadow: "0px 0px 15px -5px #777777",
+          }}
+        >
+          {formContent}
+        </Box>
+      )}
+    </>
   );
 };
 export default TransactionForm;
