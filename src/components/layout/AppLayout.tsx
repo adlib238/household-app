@@ -33,7 +33,7 @@ export default function AppLaylout() {
   return (
     <Box
       sx={{
-        display: "flex",
+        display: { md: "flex" },
         bgcolor: (theme) => theme.palette.grey[100],
         minHeight: "100vh",
       }}
@@ -43,8 +43,8 @@ export default function AppLaylout() {
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
+          width: { md: `calc(100% - ${drawerWidth}px)` },
+          ml: { md: `${drawerWidth}px` },
         }}
       >
         <Toolbar>
@@ -53,7 +53,7 @@ export default function AppLaylout() {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerClose}
-            sx={{ mr: 2, display: { sm: "none" } }}
+            sx={{ mr: 2, display: { md: "none" } }}
           >
             <MenuIcon />
           </IconButton>
@@ -76,7 +76,7 @@ export default function AppLaylout() {
         sx={{
           flexGrow: 1,
           p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          width: { md: `calc(100% - ${drawerWidth}px)` },
         }}
       >
         <Toolbar />
